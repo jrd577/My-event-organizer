@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Event App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF6F9;--card:#FFFFFF;--ink:#26215C;--muted:#6A648F;--pink:#D4537E;--pink-ink:#FFFFFF;--soft:#FBEAF0;--sky:#DCEBFA;--purple:#534AB7;--line:#F0C3D3;--err:#B3261E;--gold:#FFF1CC;--gold-ink:#6B4A00;--ok-bg:#DDF3E6;--ok-ink:#14532D;--warn-bg:#FFF1CC;--warn-ink:#6B4A00;--no-bg:#FBE0DE;--no-ink:#8A1C14;--idle-bg:#E8E6F5;--idle-ink:#3C3489}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16122B;--card:#221C3D;--ink:#F1EEFE;--muted:#B4AEDC;--soft:#3A2140;--sky:#1F2C4A;--line:#5A3A66;--purple:#9A93F0;--err:#FF8A80;--gold:#4A3A12;--gold-ink:#FFE08A;--ok-bg:#1F4030;--ok-ink:#9BE3BC;--warn-bg:#4A3A12;--warn-ink:#FFE08A;--no-bg:#4A2220;--no-ink:#FFB4AB;--idle-bg:#35305A;--idle-ink:#CFCBF5}}
+:root[data-theme="dark"]{--bg:#16122B;--card:#221C3D;--ink:#F1EEFE;--muted:#B4AEDC;--soft:#3A2140;--sky:#1F2C4A;--line:#5A3A66;--purple:#9A93F0;--err:#FF8A80;--gold:#4A3A12;--gold-ink:#FFE08A;--ok-bg:#1F4030;--ok-ink:#9BE3BC;--warn-bg:#4A3A12;--warn-ink:#FFE08A;--no-bg:#4A2220;--no-ink:#FFB4AB;--idle-bg:#35305A;--idle-ink:#CFCBF5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:'Fredoka','Nunito',system-ui,sans-serif;font-weight:600;margin:0}
+button,input,textarea,select{font:inherit;color:inherit}
+#app{max-width:430px;margin:0 auto;padding:12px 14px 110px}
+.bar{display:flex;justify-content:space-between;align-items:center;margin:2px 0 14px}
+.ttl{font-size:28px;color:var(--purple)}
+.who{color:var(--muted);font-weight:700;font-size:14px}
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.back{border:0;background:transparent;color:var(--pink);font-weight:700;font-size:16px;cursor:pointer;padding:6px 0}
+.chipbtn{border:1.5px solid var(--pink);background:transparent;color:var(--pink);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer}
+.seg{display:flex;background:var(--soft);border-radius:999px;padding:3px;margin:10px 0 14px}
+.seg button{flex:1;border:0;background:transparent;border-radius:999px;padding:8px 2px;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--pink);color:var(--pink-ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.top{background:var(--soft);text-align:center;padding:16px 16px 14px}
+.top h1{font-size:34px;line-height:1.05;color:var(--purple);overflow-wrap:anywhere}
+.top h1 span{color:var(--pink)}
+.ribbon{display:inline-block;background:var(--pink);color:var(--pink-ink);font-weight:700;font-size:13px;padding:3px 16px;margin-top:8px;border-radius:4px;max-width:100%;overflow-wrap:anywhere}
+.stage{background:var(--sky);padding:18px 0 16px;text-align:center;position:relative}
+.stage .b{position:absolute;font-size:34px}
+.photo{width:150px;height:176px;margin:0 auto;border:6px solid var(--fc,#ED93B1);border-radius:75px 75px 14px 14px;background:#EFEDE6;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:44px}
+.photo img{width:100%;height:100%;object-fit:cover}
+.count{display:inline-block;margin:12px 3px 0;background:var(--card);border-radius:999px;padding:3px 14px;font-weight:700;font-size:13px;color:var(--purple)}
+.msg{padding:14px 18px 10px;text-align:center}
+.acts{display:flex;gap:8px;padding:8px 14px 14px;flex-wrap:wrap}
+.btn{flex:1;min-width:130px;border:0;border-radius:999px;padding:12px 14px;font-weight:700;background:var(--pink);color:var(--pink-ink);cursor:pointer;min-height:46px}
+.btn.alt{background:transparent;color:var(--pink);border:2px solid var(--pink)}
+.btn.full{width:100%;flex:none}
+.btn.danger{background:transparent;color:var(--err);border:2px solid var(--err)}
+a.btn{text-align:center;text-decoration:none;display:block;line-height:22px}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.gi:focus-visible,.typ:focus-visible,.chipbtn:focus-visible,.evr:focus-visible,.tb:focus-visible,.back:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.panel{background:var(--soft);padding:12px 16px 14px;border-radius:20px 20px 0 0}
+.panel h3,.sec h3{font-size:16px;margin-bottom:4px}
+.sec{margin:18px 0 0}
+.row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.row:last-child{border-bottom:0}
+.rk{width:24px;text-align:center;font-weight:700;color:var(--pink);flex:none}
+.row .t{flex:1;min-width:0}.row .t small{color:var(--muted)}.row .ic{font-size:20px;letter-spacing:2px}
+.tg{display:inline-block;background:var(--gold);color:var(--gold-ink);font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;margin-left:4px}
+.more{display:block;margin:6px auto 0;border:0;background:transparent;color:var(--pink);font-weight:700;cursor:pointer;padding:6px}
+.empty{padding:12px 0;color:var(--muted);font-size:14px}
+.nudge{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14px;margin:6px 0 4px}
+.nudge.top{background:var(--gold);color:var(--gold-ink);border-color:transparent;font-weight:700}
+.lnk{border:0;background:transparent;color:var(--pink);font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+.live{background:var(--purple);color:#fff;border-radius:14px;padding:10px 14px;font-weight:700;font-size:14px;margin-bottom:10px;text-align:center}
+.goal{margin:6px 0 8px}
+.gl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.bar2{height:10px;border-radius:999px;background:var(--soft);overflow:hidden}
+.panel .bar2{background:var(--card)}
+.bar2 i{display:block;height:100%;background:var(--pink);border-radius:999px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:6px}
+.tile{background:var(--soft);border-radius:16px;padding:12px 14px}
+.tile .k{font-size:12px;font-weight:700;color:var(--muted)}
+.tile .v{font-family:'Fredoka',sans-serif;font-size:26px;font-weight:600;color:var(--purple);line-height:1.2}
+.tile .s{font-size:12px;color:var(--muted)}
+.qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.qa .btn{min-width:0}
+.evr{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px;cursor:pointer}
+.evr .l{display:flex;gap:12px;align-items:center}
+.av{width:46px;height:46px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:24px;flex:none}
+.evr b{display:block;font-size:16px;overflow-wrap:anywhere}
+.evr small{color:var(--muted);font-size:13px}
+.evr .bar2{margin-top:10px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.c-going,.c-on{background:var(--ok-bg);color:var(--ok-ink)}
+.c-maybe,.c-soon{background:var(--warn-bg);color:var(--warn-ink)}
+.c-no,.c-off{background:var(--no-bg);color:var(--no-ink)}
+.c-pending,.c-sched{background:var(--idle-bg);color:var(--idle-ink)}
+.sum{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.gav{width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--purple);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+.xb{border:0;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px}
+.thx{border:1.5px solid var(--pink);background:transparent;color:var(--pink);border-radius:999px;padding:3px 12px;font-weight:700;font-size:12px;cursor:pointer}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px;font-weight:600}
+.mrow small{display:block;color:var(--muted);font-weight:400;font-size:13px}
+.mrow button.lnk{font-size:15px}
+.sw{width:22px;height:22px;accent-color:var(--pink)}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 4px}
+input[type=text],input[type=date],input[type=time],input[type=tel],input[type=number],textarea,select{width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px}
+textarea{min-height:76px;resize:vertical}
+.err{color:var(--err);font-size:13px;margin-top:4px;min-height:18px}
+.frames{display:flex;gap:8px}
+.fr{flex:1;height:46px;border-radius:10px;border:5px solid;background:transparent;cursor:pointer}
+.fr.sel{outline:3px solid var(--purple);outline-offset:2px}
+.fr.lock{border-style:dashed;border-color:var(--muted);color:var(--muted);font-size:12px;font-weight:700}
+.form{padding:18px}
+.form h2{font-size:24px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 10px}
+.pick{border:2px dashed var(--pink);border-radius:14px;padding:16px;text-align:center;color:var(--pink);font-weight:700;cursor:pointer;background:transparent;width:100%}
+.types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.typ{background:var(--soft);border:2px solid transparent;border-radius:18px;padding:16px 8px;text-align:center;cursor:pointer;font-family:'Fredoka',sans-serif;font-weight:500;font-size:17px;color:var(--ink)}
+.typ .e{display:block;font-size:38px;line-height:1.2}
+.typ.sel{border-color:var(--pink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips .typ{padding:6px 12px;font-size:14px;border-radius:999px;font-family:'Nunito',sans-serif;font-weight:700}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#sheetWrap{position:fixed;inset:0;background:rgba(20,10,40,.55);display:none;align-items:flex-end;justify-content:center;z-index:30}
+#sheetWrap.on{display:flex}
+#sheet{background:var(--card);width:100%;max-width:430px;max-height:92%;overflow:auto;border-radius:24px 24px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px))}
+#sheet h2{font-size:22px;margin-bottom:2px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.gi{background:var(--soft);border:2px solid transparent;border-radius:14px;padding:10px 2px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--ink)}
+.gi .e{display:block;font-size:30px;line-height:1.2}
+.gi.sel{border-color:var(--pink)}
+.x{float:right;border:0;background:transparent;font-size:24px;cursor:pointer;color:var(--muted)}
+.wallet{background:var(--soft);border-radius:18px;padding:14px;margin:0 0 12px}
+.wallet .n{font-family:'Fredoka',sans-serif;font-size:34px;font-weight:600;color:var(--purple)}
+.line{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:4px 0}
+.line span:last-child{color:var(--muted)}
+.ck{display:flex;align-items:center;gap:10px;font-weight:600;margin:0;padding:9px 0;border-bottom:1px solid var(--line)}
+.ck input{width:20px;height:20px;accent-color:var(--pink)}
+.pv{width:100%;border-radius:12px;border:1px solid var(--line);display:block;margin:10px 0}
+.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:20}
+.tabbar>div{display:flex;width:100%;max-width:430px}
+.tb{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 0;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border-radius:12px}
+.tb span{font-size:22px;line-height:1.2}
+.tb.on{color:var(--pink)}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--purple);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;display:none;z-index:40;max-width:90%;text-align:center}
+.note{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--muted);margin:0 0 12px}
+@media (prefers-reduced-motion:no-preference){#sheet{animation:up .25s ease-out}@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}}
+
+.grow{flex:1;min-width:0}
+.evr small{display:block}
+.center{text-align:center;padding:40px 8px}
+.note.warn{background:var(--gold);color:var(--gold-ink)}
+.row .t{overflow-wrap:anywhere}
+
+input[type=email],input[type=password]{width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px}
+.err.ok{color:var(--ok-ink)}
+.tix{background:var(--soft);border-radius:18px;padding:12px 14px;margin:0 14px 10px}
+.tix .tp{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;color:var(--muted);font-size:14px;margin-bottom:6px}
+.tix .tp b{font-family:'Fredoka',sans-serif;font-size:26px;color:var(--purple)}
+.tix .left{font-size:15px;font-weight:700;margin-bottom:6px}
+.tix .bar2{background:var(--card)}
+.soldout{background:var(--no-bg);color:var(--no-ink);border:3px solid var(--no-ink);border-radius:18px;margin:0 14px 12px;padding:16px 10px;text-align:center}
+.soldout b{display:block;font-family:'Fredoka',sans-serif;font-size:44px;line-height:1.05;letter-spacing:2px}
+.soldout span{font-weight:700;font-size:14px}
+.mytix{margin:0 14px 12px;border:2px dashed var(--pink);border-radius:18px;padding:10px 14px}
+.mytix h3{font-size:16px;margin-bottom:2px}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;letter-spacing:1px}
+.qty{display:flex;align-items:center;justify-content:center;gap:18px;margin:14px 0 6px}
+.qty button{width:46px;height:46px;border-radius:50%;border:2px solid var(--pink);background:transparent;color:var(--pink);font-size:24px;font-weight:700;cursor:pointer}
+.qty b{font-family:'Fredoka',sans-serif;font-size:34px;min-width:44px;text-align:center}
+.row.cx .t{opacity:.55;text-decoration:line-through}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="sheetWrap" role="dialog" aria-modal="true"><div id="sheet"></div></div>
+<div id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const APP_NAME='My Event App',APP_URL=location.origin+location.pathname,FEE=0;
+const FRAMES={pink:'#ED93B1',purple:'#7F77DD',gold:'#EF9F27',sky:'#85B7EB'};
+const it=(id,e,n,p,w)=>({id,e,n,p,w});
+const EV={
+ birthday:{n:'Birthday',e:'🎂',deco:['🎈','🎉'],d:'Age is worked out from the date',my:'my birthday',dateL:'Birthday party date',nameL:'Name',nameP:'Amani',msg:'May your day be filled with lots of love, sweet treats, fun and laughter.',t:(s,i)=>s.age>0?['Happy '+ord(s.age),'Birthday!']:['Happy','Birthday!'],
+  items:[it('balloon','🎈','Balloon',1,'a balloon'),it('flowers','💐','Flowers',3,'flowers'),it('cake','🍰','Cake',5,'a cake'),it('confetti','🎉','Confetti',7,'confetti'),it('crown','👑','Crown',10,'a crown'),it('gift','🎁','Big gift',25,'a big gift')]},
+ wedding:{n:'Wedding',e:'💍',deco:['💐','🥂'],d:'Celebrate a couple',my:'our wedding',dateL:'Wedding date',nameL:'Couple names',nameP:'Amani and Joy',msg:'Join us as we begin our life together. Your love and support mean the world to us.',t:()=>['Celebrate our','Wedding!'],
+  items:[it('flowers','💐','Flowers',3,'flowers'),it('toast','🥂','Toast',5,'a toast'),it('cake','🍰','Cake',8,'a cake'),it('rings','💍','Rings',15,'rings'),it('honeymoon','✈️','Honeymoon',25,'honeymoon support'),it('home','🏠','Home gift',50,'a home gift')]},
+ graduation:{n:'Graduation',e:'🎓',deco:['🎓','🎉'],d:'Mark a finished degree or course',my:'my graduation',dateL:'Graduation date',nameL:'Graduate name',nameP:'Brian',msg:'All the hard work paid off. Thank you for celebrating this big step with us.',t:()=>['Congratulations','Graduate!'],
+  items:[it('cap','🎓','Cap',3,'a cap'),it('books','📚','Books',5,'books'),it('flowers','💐','Flowers',8,'flowers'),it('confetti','🎉','Confetti',10,'confetti'),it('trophy','🏆','Trophy',15,'a trophy'),it('gift','🎁','Big gift',25,'a big gift')]},
+ baby:{n:'Baby shower',e:'👶',deco:['🧸','🎈'],d:'Welcome a new baby',my:'our baby shower',dateL:'Baby shower date',nameL:'Parents or baby name',nameP:'Baby Mwangi',msg:'A little one is on the way. Come celebrate with us and shower the baby with love.',t:()=>['Welcome','Baby!'],
+  items:[it('balloon','🎈','Balloon',1,'a balloon'),it('teddy','🧸','Teddy',5,'a teddy'),it('bottle','🍼','Bottle',8,'a bottle'),it('clothes','👕','Outfit',12,'an outfit'),it('stroller','🛒','Stroller',25,'a stroller'),it('gift','🎁','Big gift',25,'a big gift')]},
+ other:{n:'Other event',e:'🎉',deco:['🎈','🎉'],d:'Reunion, party, anything else',my:'this event',dateL:'Event date',nameL:'Event title',nameP:'Family reunion',msg:'We would love to have you with us. Your presence makes it special.',t:()=>['You are','invited!'],
+  items:[it('balloon','🎈','Balloon',1,'a balloon'),it('flowers','💐','Flowers',3,'flowers'),it('cake','🍰','Cake',5,'a cake'),it('confetti','🎉','Confetti',7,'confetti'),it('crown','👑','Crown',10,'a crown'),it('gift','🎁','Big gift',25,'a big gift')]}
+};
+const SL={going:'Going',maybe:'Maybe',no:"Can't come",pending:'Waiting'};
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function ord(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+const fmtDate=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+function fmtTime(t){if(!t)return '';const p=t.split(':'),h=+p[0];return (h%12||12)+':'+p[1]+' '+(h>=12?'PM':'AM')}
+function today0(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())}
+const usd=n=>'$'+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<1)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+' hr ago';const d=Math.round(h/24);return d+(d===1?' day ago':' days ago')}
+function info(e){const t=today0(),b=new Date(e.date+'T00:00:00');
+ return{when:b,days:Math.round((b-t)/864e5)}}
+const countText=i=>i.days<0?'This event has passed':i.days===0?'Today is the day':(i.days===1?'Tomorrow':'In '+i.days+' days')+', '+fmtDate(i.when);
+const dayLabel=i=>i.days<0?'Ended':i.days===0?'Today':i.days===1?'Tomorrow':'In '+i.days+' days';
+function heads(e,i){const h=(e.headline||'').trim();if(h){const k=h.lastIndexOf(' ');return k>0?[h.slice(0,k),h.slice(k+1)]:['',h]}return EV[e.type].t(e,i)}
+const ribT=e=>(e.ribbon||'').trim()||(e.type==='birthday'?'To '+e.name:e.name);
+function phrase(items){const u=[],seen={};items.forEach(g=>{if(!seen[g.id]){seen[g.id]=1;u.push(g.w)}});return u.length>1?u.slice(0,-1).join(', ')+' and '+u[u.length-1]:u[0]}
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>{e.style.display='none'},3000)}
+
+/* ---------- state ---------- */
+const cfg=window.APP_CONFIG||{};
+let sb=null,ME={id:null,name:'',username:''},AUTHSTATE='loading',MODE='in',RECOVERY=false,LOADERR=false,started=false,sessBusy=false;
+let EVS=[],GST=[],GFT=[],REQ=[],FR=[],TIX=[];
+const FEED={},STUB={},EXTRA={},NAME={},UNAME={},STATS={};
+const R={tab:'events',id:null,sec:'overview',form:null};
+let ready=false,dirty=false,sheetOn=false,CONFIRM=null,selItem=null,showAll=false,schedT=0,LP=null,LQ=false;
+const lsGet=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const lsDel=k=>{try{localStorage.removeItem(k)}catch(e){}};
+const CODE=/^[a-z0-9]{6,12}$/;
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+const nm=u=>u===ME.id?(ME.name||'You'):(NAME[u]||'Someone');
+const first=u=>nm(u).split(' ')[0];
+const ini=u=>nm(u).split(' ').map(x=>x[0]||'').join('').slice(0,2).toUpperCase()||'?';
+const evById=id=>EVS.find(e=>e.id===id)||EXTRA[id]||null;
+const gOf=eid=>GST.filter(g=>g.eid===eid);
+const myG=eid=>GST.find(g=>g.eid===eid&&g.u===ME.id)||null;
+const giftsOf=eid=>{const e=evById(eid);return e&&e.owner===ME.id?GFT.filter(g=>g.eid===eid):(FEED[eid]||[])};
+const reqsOf=eid=>REQ.filter(r=>r.eid===eid&&!GST.some(g=>g.eid===eid&&g.u===r.u));
+const canSee=e=>e.owner===ME.id||(e.access||'invite')==='link'||!!myG(e.id);
+function groups(eid){const m={};giftsOf(eid).forEach(g=>{if(!m[g.u])m[g.u]={u:g.u,items:[],total:0,rk:g.rk||0};m[g.u].items.push(g);m[g.u].total+=g.price});return Object.keys(m).map(k=>m[k]).sort((a,b)=>(a.rk&&b.rk)?a.rk-b.rk:b.total-a.total)}
+const evNet=e=>{const g=isT(e)?validTix(e.id).reduce((a,x)=>a+x.price,0):giftsOf(e.id).reduce((a,x)=>a+x.price,0);return{gross:g,net:g*(1-FEE)}};
+const TCY='KES';
+const kes=n=>TCY+' '+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+const isT=e=>!!e&&e.kind==='ticket';
+const tixOf=eid=>TIX.filter(t=>t.eid===eid);
+const validTix=eid=>tixOf(eid).filter(t=>t.st==='valid');
+const soldOf=e=>e.owner===ME.id?validTix(e.id).length:(STATS[e.id]?STATS[e.id].sold:validTix(e.id).length);
+const leftOf=e=>Math.max(0,(e.total||0)-soldOf(e));
+
+/* ---------- data ---------- */
+const T=r=>+new Date(r);
+const q=r=>{if(r&&r.error)throw r.error;return r};
+const mapEv=r=>({id:r.id,owner:r.owner,type:r.type,name:r.name,headline:r.headline||'',ribbon:r.ribbon||'',date:r.event_date,time:r.event_time||'',venue:r.venue||'',goal:r.goal||0,age:r.age||0,msg:r.msg||'',photo:r.photo||'',frame:r.frame||'pink',access:r.access||'invite',open:r.open_guests!==false,kind:r.kind||'gift',price:Number(r.ticket_price)||0,total:r.ticket_total||0,created:T(r.created_at)});
+const dbEv=f=>({type:f.type,name:f.name,headline:f.headline,ribbon:f.ribbon,event_date:f.date,event_time:f.time,venue:f.venue,goal:f.goal,age:f.age,msg:f.msg,photo:f.photo,frame:f.frame,access:f.access,open_guests:f.open,kind:f.kind,ticket_price:f.price,ticket_total:f.total});
+function errText(e){const c=(e&&e.code)||'',m=(e&&e.message)||'';if(/sold_out/.test(m))return 'Not enough tickets left.';if(/sales_closed/.test(m))return 'Ticket sales have closed.';if(/total_below_sold/.test(m))return 'You have already sold more tickets than that.';if(/bad_qty/.test(m))return 'Choose between 1 and 50 tickets.';if(/no_access|no_event/.test(m))return 'You are not allowed to buy tickets for this event.';if(c==='42501'||/row-level security|permission denied/i.test(m))return 'You are not allowed to do that.';if(c==='23505')return 'That already exists.';if(c==='23503')return 'That person or event no longer exists.';return 'Could not save. Check your connection and try again.'}
+async function wr(fn,ok){try{await fn();await loadAll();if(ok)toast(ok);return true}catch(e){toast(errText(e));return false}}
+const sched=ms=>{clearTimeout(schedT);schedT=setTimeout(loadAll,ms===undefined?400:ms)};
+function loadAll(){if(LP){LQ=true;return LP}LP=(async()=>{do{LQ=false;await doLoad()}while(LQ);LP=null})();return LP}
+async function doLoad(){
+ if(!ME.id)return;
+ try{
+  const res=await Promise.all([sb.from('events').select('*'),sb.from('guests').select('*'),sb.from('requests').select('*'),sb.from('gifts').select('*'),sb.from('friends').select('friend_id'),sb.from('tickets').select('*')]);
+  res.forEach(q);
+  EVS=res[0].data.map(mapEv);
+  GST=res[1].data.map(r=>({id:r.event_id+'~'+r.user_id,eid:r.event_id,u:r.user_id,via:r.via,status:r.status,t:T(r.created_at)}));
+  REQ=res[2].data.map(r=>({id:r.event_id+'~'+r.user_id,eid:r.event_id,u:r.user_id,via:r.via,t:T(r.created_at)}));
+  GFT=res[3].data.map(r=>({gid:r.id,eid:r.event_id,u:r.user_id,id:r.item_id,e:r.emoji,w:r.label,price:Number(r.price),t:T(r.created_at)}));
+  FR=res[4].data.map(x=>x.friend_id);
+  TIX=res[5].data.map(r=>({id:r.id,eid:r.event_id,u:r.user_id,code:r.code,price:Number(r.price),st:r.status,t:T(r.created_at)}));
+  const cur=R.id;
+  if(cur&&!EVS.some(e=>e.id===cur)){const r=await sb.rpc('get_event',{p_code:cur});if(!r.error&&r.data&&r.data.length)EXTRA[cur]=mapEv(r.data[0]);else delete EXTRA[cur]}
+  let note=null;const ce=cur?evById(cur):null;
+  if(ce&&ce.owner!==ME.id){const g=await sb.rpc('event_gifts',{p_event:cur});if(!g.error){const rows=(g.data||[]).map(r=>({gid:r.o_gid,eid:cur,u:r.o_user,id:r.o_item,e:r.o_emoji,w:r.o_label,price:r.o_price==null?0:Number(r.o_price),t:T(r.o_at),rk:r.o_rank}));if((cur in FEED)&&rows.length>FEED[cur].length){const l=rows[rows.length-1];if(l.u!==ME.id)note=l}FEED[cur]=rows}}
+  const tev=EVS.concat(Object.values(EXTRA)).filter(x=>isT(x)&&x.owner!==ME.id);
+  if(tev.length){const rs=await Promise.all(tev.map(x=>sb.rpc('ticket_stats',{p_event:x.id})));rs.forEach((r,k)=>{if(!r.error&&r.data&&r.data.length)STATS[tev[k].id]={sold:r.data[0].o_sold,total:r.data[0].o_total}})}
+  const need=new Set(REQ.filter(r=>r.u===ME.id&&!GST.some(g=>g.eid===r.eid&&g.u===ME.id)).map(r=>r.eid));if(cur&&!ce)need.add(cur);
+  for(const id of need){if(!STUB[id]){const s=await sb.rpc('event_stub',{p_code:id});if(!s.error&&s.data&&s.data.length){const d=s.data[0];STUB[id]={id:d.o_id,owner_id:d.o_owner,owner_name:d.o_name};NAME[d.o_owner]=d.o_name}}}
+  const ids=new Set([ME.id]);
+  EVS.concat(Object.values(EXTRA)).forEach(e=>ids.add(e.owner));
+  GST.concat(GFT,REQ,TIX).forEach(x=>{ids.add(x.u);if(UUID.test(x.via||''))ids.add(x.via)});
+  Object.values(FEED).forEach(a=>a.forEach(g=>ids.add(g.u)));FR.forEach(u=>ids.add(u));
+  const miss=Array.from(ids).filter(u=>!NAME[u]||(FR.indexOf(u)>=0&&!UNAME[u]));
+  if(miss.length){const p=await sb.from('profiles').select('id,name,username').in('id',miss);if(!p.error&&p.data)p.data.forEach(x=>{NAME[x.id]=x.name;UNAME[x.id]=x.username})}
+  LOADERR=false;const was=ready;ready=true;if(!was)render();else refresh();
+  if(note)toast(first(note.u)+' sent '+note.w+' '+note.e);
+ }catch(e){if(!ready){LOADERR=true;render()}}
+}
+const typing=()=>{const a=document.activeElement;return !!a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.type!=='checkbox'};
+function refresh(){if(sheetOn||R.form||typing()||AUTHSTATE!=='app'){dirty=true;return}dirty=false;render()}
+document.addEventListener('focusout',()=>setTimeout(()=>{if(dirty&&!sheetOn&&!R.form&&!typing()&&AUTHSTATE==='app'){dirty=false;render()}},80));
+
+/* ---------- sign-in ---------- */
+function resetState(){ME={id:null,name:'',username:''};EVS=[];GST=[];GFT=[];REQ=[];FR=[];TIX=[];[FEED,STUB,EXTRA,STATS].forEach(o=>Object.keys(o).forEach(k=>delete o[k]));ready=false;LOADERR=false;R.id=null;R.form=null;R.tab='events';sheetOn=false;$('sheetWrap').classList.remove('on');AUTHSTATE='out';MODE='in';render()}
+async function boot(){
+ const h0=(location.hash||'').replace('#','').toLowerCase();if(CODE.test(h0))lsSet('pc',h0);
+ render();
+ if(!cfg.SUPABASE_URL||!cfg.SUPABASE_ANON_KEY||/YOUR_/.test(cfg.SUPABASE_URL+cfg.SUPABASE_ANON_KEY)||!window.supabase){AUTHSTATE='setup';render();return}
+ sb=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ sb.auth.onAuthStateChange((ev,sess)=>{setTimeout(()=>{
+  if(ev==='PASSWORD_RECOVERY'){RECOVERY=true;AUTHSTATE='recovery';render();return}
+  if(ev==='SIGNED_OUT'){resetState();return}
+  if(sess&&!RECOVERY&&(ev==='SIGNED_IN'||ev==='INITIAL_SESSION'))onSession(sess);
+  else if(!sess&&ev==='INITIAL_SESSION'&&AUTHSTATE==='loading'){AUTHSTATE='out';render()}
+ },0)});
+ setTimeout(async()=>{if(AUTHSTATE==='loading'){const r=await sb.auth.getSession();if(r.data&&r.data.session)onSession(r.data.session);else if(AUTHSTATE==='loading'){AUTHSTATE='out';render()}}},4000);
+}
+async function onSession(sess){const id=sess.user.id;if(sessBusy||(AUTHSTATE==='app'&&ME.id===id))return;sessBusy=true;
+ try{let r=null;
+  for(let k=0;k<3;k++){r=await sb.from('profiles').select('id,name,username').eq('id',id).maybeSingle();if(r.data||r.error)break;await new Promise(f=>setTimeout(f,700))}
+  if(RECOVERY)return;
+  if(!r||r.error||!r.data){AUTHSTATE='error';render();return}
+  ME={id:id,name:r.data.name||'',username:r.data.username||''};NAME[id]=ME.name;
+  if(!ME.username){AUTHSTATE='onboard';render();return}
+  await startApp()}
+ finally{sessBusy=false}}
+async function startApp(){AUTHSTATE='app';ready=false;render();await loadAll();
+ if(!started){started=true;sb.channel('rt').on('postgres_changes',{event:'*',schema:'public'},()=>sched()).subscribe();
+  setInterval(()=>{if(!document.hidden&&ME.id&&AUTHSTATE==='app')sched(0)},20000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME.id&&AUTHSTATE==='app')sched(0)})}
+ const pc=lsGet('pc');if(pc){lsDel('pc');await openCode(pc,true)}}
+async function openCode(c,quiet){c=(c||'').trim().toLowerCase().replace(/^.*#/,'');if(!CODE.test(c))return false;
+ if(!evById(c)){const r=await sb.rpc('get_event',{p_code:c});
+  if(!r.error&&r.data&&r.data.length)EXTRA[c]=mapEv(r.data[0]);
+  else{const s=await sb.rpc('event_stub',{p_code:c});if(!s.error&&s.data&&s.data.length){const d=s.data[0];STUB[c]={id:d.o_id,owner_id:d.o_owner,owner_name:d.o_name};NAME[d.o_owner]=d.o_name}else{if(!quiet)toast('No event with that code.');return false}}}
+ R.tab='events';R.id=c;R.sec='overview';R.form=null;await loadAll();render();window.scrollTo(0,0);return true}
+
+const setupPage=()=>'<div class="card form"><h2>Almost there</h2><p class="sub">Open config.js and paste your Supabase project URL and anon key, then reload this page. The README has the steps.</p></div>';
+const loadingPage=t=>'<div class="center"><h2>'+t+'</h2></div>';
+const errorPage=()=>'<div class="center"><h2>Could not load your account</h2><p class="sub">Check your connection, and make sure supabase/schema.sql was run in your Supabase project.</p><button class="btn full" onclick="location.reload()">Try again</button><div style="height:10px"></div><button class="btn alt full" onclick="signOut()">Sign out</button></div>';
+function signInPage(){const up=MODE==='up';
+ return '<div class="top" style="border-radius:24px 24px 0 0;margin-top:20px"><h1>'+APP_NAME+'</h1></div><div class="card form" style="border-radius:0 0 24px 24px;border-top:0"><h2>'+(up?'Create your account':'Welcome back')+'</h2><p class="sub">Plan events, invite friends and collect gifts.</p>'+
+ '<button class="btn full" onclick="googleIn()">Continue with Google</button><p class="sub" style="text-align:center;margin:14px 0 0">or use your email</p>'+
+ '<label for="em">Email</label><input type="email" id="em" autocomplete="email" autocapitalize="none">'+
+ '<label for="pw">Password</label><input type="password" id="pw" autocomplete="'+(up?'new-password':'current-password')+'">'+
+ '<div class="err" id="am"></div><div class="acts" style="padding:8px 0 0"><button class="btn" onclick="emailAuth()">'+(up?'Create account':'Sign in')+'</button></div>'+
+ '<p class="sub" style="text-align:center;margin:12px 0 0">'+(up?'Already have an account? <button class="lnk" onclick="setMode(\'in\')">Sign in</button>':'New here? <button class="lnk" onclick="setMode(\'up\')">Create an account</button><br><button class="lnk" style="margin-top:6px" onclick="forgotPw()">Forgot your password?</button>')+'</p></div>'}
+const setMode=m=>{MODE=m;render()};
+function amsg(t,good){const e=$('am');if(!e)return;e.className=good?'note':'err';e.textContent=t}
+const googleIn=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:APP_URL}});
+async function emailAuth(){const em=$('em').value.trim(),pw=$('pw').value;if(!em||!pw){amsg('Enter your email and password.');return}
+ if(MODE==='up'){if(pw.length<8){amsg('Use at least 8 characters for your password.');return}
+  const r=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:APP_URL}});
+  if(r.error){amsg(r.error.message);return}
+  if(!r.data.session)amsg('Check your email and tap the confirmation link, then come back and sign in.',true)}
+ else{const r=await sb.auth.signInWithPassword({email:em,password:pw});
+  if(r.error)amsg(/invalid login/i.test(r.error.message)?'Wrong email or password.':/not confirmed/i.test(r.error.message)?'Confirm your email first. Check your inbox for the link.':r.error.message)}}
+async function forgotPw(){const em=$('em').value.trim();if(!em){amsg('Enter your email above first.');return}
+ const r=await sb.auth.resetPasswordForEmail(em,{redirectTo:APP_URL});
+ amsg(r.error?r.error.message:'If that email has an account, a reset link is on its way.',!r.error)}
+const recoveryPage=()=>'<div class="card form"><h2>Set a new password</h2><label for="np">New password</label><input type="password" id="np" autocomplete="new-password"><div class="err" id="ne"></div><div class="acts" style="padding:8px 0 0"><button class="btn" onclick="saveNewPw()">Save password</button></div></div>';
+async function saveNewPw(){const p=$('np').value;if(p.length<8){$('ne').textContent='Use at least 8 characters.';return}
+ const r=await sb.auth.updateUser({password:p});if(r.error){$('ne').textContent=r.error.message;return}
+ RECOVERY=false;AUTHSTATE='loading';render();const s=await sb.auth.getSession();if(s.data.session)onSession(s.data.session);else{AUTHSTATE='out';render()}}
+const onboardPage=()=>'<div class="card form"><h2>Finish your account</h2><p class="sub">Friends find you by username. Your friends list is private to you.</p><label for="on">Your name</label><input type="text" id="on" value="'+esc(ME.name)+'" placeholder="Amani Kiprono"><label for="ou">Username</label><input type="text" id="ou" placeholder="amani_k" autocapitalize="none" autocomplete="off"><div class="err" id="oe"></div><div class="acts" style="padding:8px 0 0"><button class="btn" onclick="saveOnboard()">Continue</button></div></div>';
+async function saveOnboard(){const n=$('on').value.trim(),u=$('ou').value.trim().replace(/^@/,'').toLowerCase(),e=$('oe');
+ if(!n){e.textContent='Enter your name.';return}if(!/^[a-z0-9_]{3,20}$/.test(u)){e.textContent='Username: 3 to 20 letters, numbers, or underscores.';return}
+ const r=await sb.from('profiles').update({name:n,username:u}).eq('id',ME.id);
+ if(r.error){e.textContent=r.error.code==='23505'?'That username is taken. Try another.':'Could not save. Try again.';return}
+ ME.name=n;ME.username=u;NAME[ME.id]=n;UNAME[ME.id]=u;startApp()}
+const signOut=()=>sb.auth.signOut();
+
+/* ---------- shell ---------- */
+function render(){const a=$('app'),y=window.scrollY;let h;
+ if(AUTHSTATE==='setup')h=setupPage();
+ else if(AUTHSTATE==='loading')h=loadingPage('Loading');
+ else if(AUTHSTATE==='out')h=signInPage();
+ else if(AUTHSTATE==='recovery')h=recoveryPage();
+ else if(AUTHSTATE==='onboard')h=onboardPage();
+ else if(AUTHSTATE==='error'||LOADERR)h=errorPage();
+ else if(!ready)h=loadingPage('Loading your events');
+ else if(R.form)h=R.form.choose?chooserPage():formPage();
+ else if(R.id){const e=evById(R.id);h=e?(e.owner===ME.id?managerPage(e):guestPage(e)):(STUB[R.id]?lockedPage(R.id):missingPage())}
+ else h=tabHeader()+tabBody()+tabbar();
+ a.innerHTML=h;window.scrollTo(0,y)}
+function nav(f){f();render();window.scrollTo(0,0)}
+function openSheet(h){sheetOn=true;$('sheet').innerHTML=h;$('sheetWrap').classList.add('on')}
+function closeSheet(){sheetOn=false;$('sheetWrap').classList.remove('on');if(dirty)refresh()}
+$('sheetWrap').addEventListener('click',e=>{if(e.target.id==='sheetWrap')closeSheet()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+const XB=()=>'<button class="x" onclick="closeSheet()" aria-label="Close">×</button>';
+function askConfirm(title,text,label,fn){CONFIRM=fn;openSheet(XB()+'<h2>'+esc(title)+'</h2><p class="sub">'+esc(text)+'</p><div class="acts" style="padding:8px 0 0"><button class="btn danger" onclick="runConfirm()">'+esc(label)+'</button><button class="btn alt" onclick="closeSheet()">Cancel</button></div>')}
+async function runConfirm(){const f=CONFIRM;CONFIRM=null;closeSheet();if(f)await f()}
+async function copyText(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||'Copied')}catch(e){openSheet(XB()+'<h2>Copy this</h2><p class="sub">Your browser blocked copying. Select the text below and copy it.</p><textarea id="cpy" readonly>'+esc(t)+'</textarea>');setTimeout(()=>{const c=$('cpy');if(c){c.focus();c.select()}},50)}}
+
+function tabHeader(){const t={events:'Events',friends:'Friends',wallet:'Wallet',me:'Profile'}[R.tab];return '<div class="bar"><h1 class="ttl">'+t+'</h1><span class="who">@'+esc(ME.username)+'</span></div>'}
+function tabbar(){const T=[['events','🎉','Events'],['friends','👥','Friends'],['wallet','💰','Wallet'],['me','🙂','Profile']];
+ return '<nav class="tabbar" aria-label="Main"><div>'+T.map(t=>'<button class="tb'+(R.tab===t[0]?' on':'')+'" onclick="nav(()=>{R.tab=\''+t[0]+'\'})"><span aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>').join('')+'</div></nav>'}
+const tabBody=()=>({events:eventsTab,friends:friendsTab,wallet:walletTab,me:meTab}[R.tab])();
+
+/* ---------- events tab ---------- */
+function eventsTab(){const mine=[],inv=[],past=[];
+ EVS.forEach(e=>{const d=info(e).days,host=e.owner===ME.id;if(!host&&!myG(e.id))return;if(d<0)past.push(e);else(host?mine:inv).push(e)});
+ const by=(a,b)=>info(a).days-info(b).days;mine.sort(by);inv.sort(by);past.sort((a,b)=>info(b).days-info(a).days);
+ const asked=REQ.filter(r=>r.u===ME.id&&!GST.some(g=>g.eid===r.eid&&g.u===ME.id));
+ let h='<button class="btn full" onclick="newEv()">Create event</button><div style="height:14px"></div>';
+ h+='<div class="two" style="grid-template-columns:1fr auto;align-items:end;margin-bottom:6px"><div><label for="oc" style="margin:0 0 4px">Have an event code?</label><input type="text" id="oc" placeholder="k3j9x2ma" autocapitalize="none" autocomplete="off"></div><button class="btn alt" style="min-width:0" onclick="openByCode()">Open</button></div><div class="err" id="oce"></div>';
+ h+='<div class="sec"><h3>Hosting</h3></div><div style="height:8px"></div>'+(mine.length?mine.map(evRow).join(''):'<div class="empty">Events you create appear here.</div>');
+ h+='<div class="sec"><h3>Invited</h3></div><div style="height:8px"></div>'+(inv.length?inv.map(evRow).join(''):'<div class="empty">Events friends invite you to appear here. You can also open one with an event code above.</div>');
+ if(asked.length)h+='<div class="sec"><h3>Waiting for approval</h3></div><div style="height:8px"></div>'+asked.map(r=>{const s=STUB[r.eid];return '<div class="evr" style="cursor:default"><div class="l"><div class="av">🎟️</div><div class="grow"><b>'+(s?'Event by '+esc(nm(s.owner_id)):'Event '+esc(r.eid))+'</b><small>Code '+esc(r.eid)+'</small></div><span class="chip c-pending">Requested</span></div></div>'}).join('');
+ if(past.length)h+='<div class="sec"><h3>Past events</h3></div><div style="height:8px"></div>'+past.map(evRow).join('');
+ return h}
+function evRow(e){const i=info(e),ev=EV[e.type],gs=giftsOf(e.id).length,gc=gOf(e.id).length,host=e.owner===ME.id,pct=e.goal>0?Math.min(100,Math.round(gs/e.goal*100)):0;
+ return '<button class="evr" onclick="openEv(\''+esc(e.id)+'\')"><div class="l"><div class="av" aria-hidden="true">'+ev.e+'</div><div class="grow"><b>'+esc(e.name)+'</b><small>'+(isT(e)?'🎟️ Tickets · ':'')+ev.n+' · '+dayLabel(i)+'</small><small>'+(isT(e)?(host?soldOf(e)+' of '+e.total+' tickets sold':'Hosted by '+esc(nm(e.owner))+(validTix(e.id).some(t=>t.u===ME.id)?' · '+validTix(e.id).filter(t=>t.u===ME.id).length+' of your tickets':'')):(host?gc+' invited · '+gs+' gifts':'Hosted by '+esc(nm(e.owner))))+'</small></div></div>'+(host&&isT(e)?'<div class="bar2"><i style="width:'+Math.min(100,Math.round(soldOf(e)/Math.max(1,e.total)*100))+'%"></i></div>':host&&e.goal>0?'<div class="bar2"><i style="width:'+pct+'%"></i></div>':'')+'</button>'}
+const openEv=id=>{nav(()=>{R.id=id;R.sec='overview'});sched(0)};
+const closeEv=()=>nav(()=>{R.id=null});
+async function openByCode(){const e=$('oce');e.textContent='';const v=($('oc').value||'').trim().toLowerCase().replace(/^.*#/,'');
+ if(!CODE.test(v)){e.textContent='That does not look like an event code.';return}
+ await openCode(v,false)}
+function missingPage(){return '<div class="hdr"><button class="back" onclick="closeEv()">‹ Events</button></div><div class="center"><h2>Event not found</h2><p class="sub">It may have been deleted by its host.</p></div>'}
+function lockedPage(id){const s=STUB[id],asked=REQ.some(r=>r.eid===id&&r.u===ME.id);
+ return '<div class="hdr"><button class="back" onclick="closeEv()">‹ Events</button></div><div class="card form center"><div style="font-size:44px" aria-hidden="true">🔒</div><h2>Private event</h2><p class="sub">'+esc(nm(s.owner_id))+' has not invited you to this event.'+(asked?' Your request is waiting for approval.':' You can ask to join.')+'</p>'+(asked?'':'<button class="btn full" onclick="reqInvite()">Ask to join</button>')+'</div>'}
+
+/* ---------- create / edit ---------- */
+const newEv=()=>nav(()=>{R.form={choose:true,kind:'gift'}});
+function chooserPage(){return '<div class="hdr"><button class="back" onclick="nav(()=>{R.form=null})">‹ Back</button></div><div class="card form"><h2>What are you planning?</h2><div class="seg" role="tablist"><button class="'+(R.form.kind!=='ticket'?'on':'')+'" onclick="R.form.kind=\'gift\';render()">🎁 Gift event</button><button class="'+(R.form.kind==='ticket'?'on':'')+'" onclick="R.form.kind=\'ticket\';render()">🎟️ Paid tickets</button></div><p class="sub">'+(R.form.kind==='ticket'?'Guests pay the ticket price you set. Everyone who has paid is welcome, and they see how many tickets are left.':'Pick an event. Your friends get a card, an invite, and a way to send gifts.')+'</p><div class="types">'+Object.keys(EV).map(k=>'<button class="typ" onclick="startType(\''+k+'\')"><span class="e" aria-hidden="true">'+EV[k].e+'</span>'+EV[k].n+'</button>').join('')+'</div></div>'}
+const startType=k=>nav(()=>{const kd=R.form&&R.form.kind==='ticket'?'ticket':'gift';R.form={kind:kd,price:'',total:'',type:k,name:'',headline:'',ribbon:'',date:'',time:'',venue:'',goal:'',age:'',msg:EV[k].msg,photo:'',frame:'pink',open:true,access:kd==='ticket'?'link':'invite'}});
+function editEv(){const e=evById(R.id);nav(()=>{R.form={id:e.id,kind:e.kind||'gift',price:e.price||'',total:e.total||'',type:e.type,name:e.name,headline:e.headline||'',ribbon:e.ribbon||'',date:e.date,time:e.time||'',venue:e.venue||'',goal:e.goal||'',age:e.age||'',msg:e.msg,photo:e.photo||'',frame:e.frame,open:e.open!==false,access:e.access||'invite'}})}
+function setType(k){const D=R.form,old=EV[D.type].msg;if(D.msg===old)D.msg=EV[k].msg;D.type=k;render()}
+function formPage(){const D=R.form,ev=EV[D.type],tk=D.kind==='ticket';
+ const fr=Object.keys(FRAMES).map(k=>'<button type="button" class="fr'+(D.frame===k?' sel':'')+'" style="border-color:'+FRAMES[k]+'" aria-label="'+k+' frame" onclick="R.form.frame=\''+k+'\';render()"></button>').join('');
+ const chips=Object.keys(EV).map(k=>'<button type="button" class="typ'+(D.type===k?' sel':'')+'" onclick="setType(\''+k+'\')">'+EV[k].e+' '+EV[k].n+'</button>').join('');
+ return '<div class="hdr"><button class="back" onclick="nav(()=>{R.form=null})">‹ Cancel</button></div><div class="card form"><h2>'+(D.id?'Edit event':tk?'Create your ticketed '+ev.n.toLowerCase():'Create your '+ev.n.toLowerCase())+'</h2><p class="sub">Friends open your card with the event code.</p>'+
+ '<label>Event type</label><div class="chips">'+chips+'</div>'+
+ '<label for="nm">'+ev.nameL+'</label><input type="text" id="nm" value="'+esc(D.name)+'" placeholder="'+esc(ev.nameP)+'" oninput="R.form.name=this.value">'+
+ '<label for="hl">Headline (optional)</label><input type="text" id="hl" value="'+esc(D.headline)+'" placeholder="'+(D.type==='birthday'?'Happy 10th Birthday!':'Your own headline')+'" oninput="R.form.headline=this.value">'+
+ '<label for="rb">Ribbon text (optional)</label><input type="text" id="rb" value="'+esc(D.ribbon)+'" placeholder="To my little sister" oninput="R.form.ribbon=this.value">'+
+ '<div class="two"><div><label for="dt">'+ev.dateL+'</label><input type="date" id="dt" value="'+esc(D.date)+'" oninput="R.form.date=this.value"></div><div><label for="tm">Time (optional)</label><input type="time" id="tm" value="'+esc(D.time)+'" oninput="R.form.time=this.value"></div></div>'+
+ (D.type==='birthday'?'<label for="ag">Age they are turning</label><input type="number" id="ag" min="0" max="120" inputmode="numeric" value="'+esc(D.age)+'" placeholder="10" oninput="R.form.age=this.value">':'')+'<label for="vn">Venue (optional)</label><input type="text" id="vn" value="'+esc(D.venue)+'" placeholder="Nairobi, Karen" oninput="R.form.venue=this.value">'+
+ (tk?'<div class="two"><div><label for="tp">Ticket price ('+TCY+')</label><input type="number" id="tp" min="1" step="any" inputmode="decimal" value="'+esc(D.price)+'" placeholder="500" oninput="R.form.price=this.value"></div><div><label for="tt">Number of tickets</label><input type="number" id="tt" min="1" step="1" inputmode="numeric" value="'+esc(D.total)+'" placeholder="100" oninput="R.form.total=this.value"></div></div>':'<label for="gl">Gift goal (optional)</label><input type="number" id="gl" min="0" inputmode="numeric" value="'+esc(D.goal)+'" placeholder="20 gifts" oninput="R.form.goal=this.value">')+
+ '<label for="ms">Message</label><textarea id="ms" oninput="R.form.msg=this.value">'+esc(D.msg)+'</textarea>'+
+ '<label>Photo</label><input type="file" id="ph" accept="image/*" hidden onchange="pickPhoto(this)"><button type="button" class="pick" onclick="$(\'ph\').click()">'+(D.photo?'Photo added. Tap to change':'Add a photo')+'</button>'+
+ '<label>Frame color</label><div class="frames">'+fr+'</div>'+
+ (tk?'':'<label for="ac">Who can see this event</label><select id="ac" onchange="R.form.access=this.value"><option value="invite"'+(D.access!=='link'?' selected':'')+'>Only people I invite</option><option value="link"'+(D.access==='link'?' selected':'')+'>Anyone with the code</option></select>'+
+ '<div class="mrow" style="margin-top:8px"><span>Guests can bring friends<small>Their friends ask to join and you approve each one.</small></span><input class="sw" type="checkbox" aria-label="Guests can bring friends"'+(D.open?' checked':'')+' onchange="R.form.open=this.checked"></div>')+
+ '<div class="err" id="fe"></div><div class="acts" style="padding:8px 0 0"><button class="btn" onclick="saveForm()">'+(D.id?'Save changes':'Create event')+'</button></div></div>'}
+function pickPhoto(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{const m=520,s=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);R.form.photo=c.toDataURL('image/jpeg',.7);render()};im.src=e.target.result};r.readAsDataURL(f)}
+const newCode=()=>{const a=new Uint8Array(8);crypto.getRandomValues(a);return Array.from(a,x=>'abcdefghijklmnopqrstuvwxyz0123456789'[x%36]).join('')};
+async function saveForm(){const D=R.form,ev=EV[D.type],er=$('fe');
+ if(!D.name.trim()){er.textContent='Enter '+ev.nameL.toLowerCase()+'.';return}if(!D.date){er.textContent='Choose a date.';return}
+ const tk=D.kind==='ticket',pr=Math.round((parseFloat(D.price)||0)*100)/100,tt=parseInt(D.total,10)||0;
+ if(tk){if(!(pr>0)){er.textContent='Enter a ticket price.';return}if(pr>1000000){er.textContent='That ticket price is too high.';return}if(tt<1){er.textContent='Enter how many tickets are available.';return}if(tt>100000){er.textContent='Use 100,000 tickets or fewer.';return}
+  if(D.id){const cur=evById(D.id),sold=cur?validTix(D.id).length:0;if(tt<sold){er.textContent='You have already sold '+sold+' tickets. Use '+sold+' or more.';return}}}
+ const f={kind:tk?'ticket':'gift',price:tk?pr:0,total:tk?tt:0,type:D.type,name:D.name.trim(),headline:(D.headline||'').trim(),ribbon:(D.ribbon||'').trim(),date:D.date,time:D.time||'',venue:(D.venue||'').trim(),goal:tk?0:Math.max(0,parseInt(D.goal,10)||0),age:D.type==='birthday'?Math.max(0,parseInt(D.age,10)||0):0,msg:D.msg.trim(),photo:D.photo||'',frame:D.frame,open:tk?false:!!D.open,access:tk?'link':(D.access||'invite')};
+ let id=D.id,ok=false;
+ if(id)ok=await wr(()=>sb.from('events').update(dbEv(f)).eq('id',id).then(q),'Saved');
+ else{for(let k=0;k<4&&!ok;k++){id=newCode();const r=await sb.from('events').insert(Object.assign({id:id,owner:ME.id},dbEv(f)));
+   if(!r.error){ok=true;await loadAll();toast('Event created')}else if(r.error.code!=='23505'){toast(errText(r.error));break}}}
+ if(ok)nav(()=>{R.form=null;R.id=id;R.sec='overview'})}
+
+/* ---------- event card ---------- */
+function cardTop(e,extra){const ev=EV[e.type],i=info(e),L=heads(e,i),ph=e.photo?'<img src="'+esc(e.photo)+'" alt="'+esc(e.name)+'">':ev.e;
+ return '<div class="card"><div class="top"><h1>'+esc(L[0])+'<br><span>'+esc(L[1])+'</span></h1><div class="ribbon">'+esc(ribT(e))+'</div></div>'+
+ '<div class="stage" style="--fc:'+(FRAMES[e.frame]||FRAMES.pink)+'"><span class="b" style="left:16px;top:26px" aria-hidden="true">'+ev.deco[0]+'</span><span class="b" style="right:16px;top:8px" aria-hidden="true">'+ev.deco[1]+'</span><div class="photo">'+ph+'</div><div class="count">'+countText(i)+'</div>'+(e.time?'<div class="count">🕑 '+fmtTime(e.time)+'</div>':'')+(e.venue?'<div class="count">📍 '+esc(e.venue)+'</div>':'')+'</div><p class="msg">'+esc(e.msg)+'</p>'+(extra||'')+'</div>'}
+function goalBar(e){const n=giftsOf(e.id).length;return e.goal>0?'<div class="goal"><div class="gl"><span>Gift goal</span><span>'+n+' of '+e.goal+'</span></div><div class="bar2"><i style="width:'+Math.min(100,Math.round(n/e.goal*100))+'%"></i></div></div>':''}
+function giftRows(gs,thanks){return gs.map((g,n)=>'<div class="row"><span class="rk">'+(n===0?'1':n+1)+'</span><span class="t">'+esc(nm(g.u))+' sent '+esc(phrase(g.items))+(n===0?'<span class="tg">Top giver</span>':'')+'</span><span class="ic" aria-hidden="true">'+g.items.map(x=>x.e).join('')+'</span>'+(thanks?'<button class="thx" onclick="openThanks(\''+esc(g.u)+'\')">Thank</button>':'')+'</div>').join('')}
+function inviteText(e){const i=info(e),ev=EV[e.type],w=fmtDate(i.when);
+ return (e.type==='birthday'?e.name+"'s birthday is on "+w:e.name+' ('+ev.n.toLowerCase()+') is on '+w)+(e.time?' at '+fmtTime(e.time):'')+(e.venue?', '+e.venue:'')+(isT(e)?'. Tickets are '+kes(e.price):'')+'. Open '+APP_NAME+' and use event code '+e.id+(APP_URL?' or go to '+APP_URL+'#'+e.id:'')+'.'}
+function shareLink(){const t=inviteText(evById(R.id));try{if(navigator.share){navigator.share({text:t}).catch(()=>{});return}}catch(x){}copyText(t,'Invite message copied')}
+
+/* ---------- host view ---------- */
+function managerPage(e){if(isT(e))return ticketManager(e);const ev=EV[e.type],i=info(e),n=evNet(e),gl=gOf(e.id),rq=reqsOf(e.id),going=gl.filter(g=>g.status==='going').length;
+ const secs=[['overview','Overview'],['guests','Guests'+(rq.length?' ('+rq.length+')':'')],['gifts','Gifts'],['manage','Manage']];
+ let h='<div class="hdr"><button class="back" onclick="closeEv()">‹ Events</button><button class="chipbtn" onclick="editEv()">Edit</button></div>'+
+ '<h1 class="ttl">'+esc(e.name)+'</h1><p class="sub" style="margin:2px 0 0">'+ev.n+' · '+countText(i)+(e.time?' · '+fmtTime(e.time):'')+(e.venue?' · '+esc(e.venue):'')+'</p>'+
+ '<div class="seg" role="tablist">'+secs.map(s=>'<button role="tab" class="'+(R.sec===s[0]?'on':'')+'" onclick="R.sec=\''+s[0]+'\';render()">'+s[1]+'</button>').join('')+'</div>';
+ if(R.sec==='overview')h+='<div class="stats"><div class="tile"><div class="k">Guests invited</div><div class="v">'+gl.length+'</div><div class="s">'+going+' going</div></div><div class="tile"><div class="k">Gifts</div><div class="v">'+giftsOf(e.id).length+'</div><div class="s">'+groups(e.id).length+' givers</div></div><div class="tile"><div class="k">Raised (only you see this)</div><div class="v">'+usd(n.net)+'</div><div class="s">Recorded gifts</div></div><div class="tile"><div class="k">Days left</div><div class="v">'+(i.days<0?'Ended':i.days)+'</div><div class="s">'+fmtDate(i.when)+'</div></div></div>'+goalBar(e)+
+  '<div class="qa"><button class="btn" onclick="openInvite()">Invite friends</button><button class="btn alt" onclick="shareLink()">Copy invite message</button><button class="btn alt" onclick="openShare()">Share image</button><button class="btn alt" onclick="copyText(\''+esc(e.id)+'\',\'Event code copied\')">Copy code</button></div>'+
+  '<p class="sub" style="margin-top:8px">Event code: <b>'+esc(e.id)+'</b></p>'+
+  '<div class="sec"><h3>Recent activity</h3>'+activity(e)+'</div><div class="sec"><h3>How friends see it</h3><div style="height:8px"></div>'+cardTop(e)+'</div>';
+ else if(R.sec==='guests')h+=guestsSec(e);
+ else if(R.sec==='gifts'){const gs=groups(e.id);h+=goalBar(e)+'<p class="note">Friends see names and gifts, never amounts. Amounts are in your Wallet.</p>'+(gs.length?'<div class="card" style="padding:4px 14px">'+giftRows(gs,true)+'</div><div class="acts" style="padding:12px 0 0"><button class="btn" onclick="openThanks(\'\')">Thank everyone</button></div>':'<div class="empty">No gifts yet. Share your event to get the first one.</div><div class="acts" style="padding:0"><button class="btn" onclick="shareLink()">Copy invite message</button></div>')}
+ else h+=manageSec(e);
+ return h}
+function activity(e){const a=[];giftsOf(e.id).forEach(g=>a.push({t:g.t,x:'<b>'+esc(first(g.u))+'</b> sent '+esc(g.w)+' '+g.e}));
+ gOf(e.id).forEach(g=>a.push({t:g.t,x:g.via==='host'?'You invited <b>'+esc(first(g.u))+'</b>':'<b>'+esc(first(g.u))+'</b> joined'+(g.via==='link'?' from the code':'')}));
+ a.sort((x,y)=>y.t-x.t);const r=a.slice(0,5);
+ return r.length?'<div class="card" style="padding:4px 14px">'+r.map(x=>'<div class="row"><span class="t">'+x.x+'</span><small style="color:var(--muted)">'+ago(x.t)+'</small></div>').join('')+'</div>':'<div class="empty">Nothing yet. Invite friends to get started.</div>'}
+function guestsSec(e){const gl=gOf(e.id),rq=reqsOf(e.id),c={going:0,maybe:0,no:0,pending:0};gl.forEach(g=>{c[g.status]=(c[g.status]||0)+1});
+ const rqh=rq.map(r=>'<div class="row"><div class="gav" aria-hidden="true">'+esc(ini(r.u))+'</div><span class="t"><b>'+esc(nm(r.u))+'</b><br><small>'+(r.via==='link'?'Asked to join with the code':'Brought by '+esc(nm(r.via)))+'</small></span><button class="thx" onclick="approveReq(\''+esc(r.id)+'\')">Approve</button><button class="xb" aria-label="Decline" onclick="declineReq(\''+esc(r.id)+'\')">×</button></div>').join('');
+ const sum='<div class="sum">'+['going','maybe','no','pending'].map(k=>'<span class="chip c-'+k+'">'+c[k]+' '+SL[k].toLowerCase()+'</span>').join('')+'</div>';
+ const rows=gl.map(g=>'<div class="row"><div class="gav" aria-hidden="true">'+esc(ini(g.u))+'</div><span class="t"><b>'+esc(nm(g.u))+'</b><br><small>'+(g.via==='host'?'Invited by you':g.via==='link'?'Joined with the code':'Brought by '+esc(nm(g.via)))+'</small></span><span class="chip c-'+g.status+'">'+SL[g.status]+'</span><button class="xb" aria-label="Remove guest" onclick="rmGuest(\''+esc(g.id)+'\')">×</button></div>').join('');
+ return (rqh?'<div class="sec" style="margin-top:0"><h3>Requests to join ('+rq.length+')</h3><div class="card" style="padding:4px 14px;margin-top:6px">'+rqh+'</div></div><div style="height:14px"></div>':'')+sum+(rows?'<div class="card" style="padding:4px 14px">'+rows+'</div>':'<div class="empty">No guests yet. Invite friends from your list or share the event code.</div>')+
+ '<div class="acts" style="padding:12px 0 0"><button class="btn" onclick="openInvite()">Invite guests</button><button class="btn alt" onclick="shareLink()">Copy invite message</button></div>'+
+ '<p class="sub" style="margin-top:6px">'+((e.access||'invite')==='invite'?'Only people you invite can open this event. Others who use the code can ask to join.':'Anyone with the code can open this event.')+(e.open!==false?' Guests can bring friends, and you approve each one.':'')+' Guests set their own reply.</p>'}
+function manageSec(e){const ac=e.access||'invite';
+ return '<div class="mrow"><span>Who can see this event<small>Only people you invite, or anyone with the code</small></span><select id="mac" aria-label="Who can see this event" style="width:auto;max-width:150px" onchange="setEv({access:this.value})"><option value="invite"'+(ac==='invite'?' selected':'')+'>Invited only</option><option value="link"'+(ac==='link'?' selected':'')+'>Anyone with code</option></select></div>'+
+ '<div class="mrow"><span>Edit event details<small>Name, headline, date, time, venue, photo</small></span><button class="lnk" onclick="editEv()">Edit</button></div>'+
+ '<div class="mrow"><span>Guests can bring friends<small>Their friends ask to join and you approve</small></span><input class="sw" type="checkbox" aria-label="Guests can bring friends"'+(e.open!==false?' checked':'')+' onchange="setEv({open_guests:this.checked})"></div>'+
+ '<div class="mrow"><span>Share image<small>Promo picture with the app name at the bottom</small></span><button class="lnk" onclick="openShare()">Open</button></div>'+
+ '<div class="acts" style="padding:18px 0 0"><button class="btn danger full" onclick="delEv()">Delete event</button></div>'}
+const setEv=p=>wr(()=>sb.from('events').update(p).eq('id',R.id).then(q));
+function delEv(){const e=evById(R.id);askConfirm('Delete this event?','This removes "'+e.name+'", its guest list and its gifts for everyone.','Delete event',async()=>{const id=e.id;if(await wr(()=>sb.from('events').delete().eq('id',id).then(q),'Event deleted'))nav(()=>{R.id=null})})}
+function rmGuest(gid){const g=GST.find(x=>x.id===gid);if(!g)return;askConfirm('Remove '+nm(g.u)+'?','They will no longer see this event unless it is open to anyone with the code.','Remove',()=>wr(()=>sb.from('guests').delete().eq('event_id',g.eid).eq('user_id',g.u).then(q)))}
+async function approveReq(rid){const r=REQ.find(x=>x.id===rid);if(!r)return;
+ if(await wr(()=>sb.from('guests').upsert({event_id:r.eid,user_id:r.u,via:r.via,status:'pending'},{onConflict:'event_id,user_id',ignoreDuplicates:true}).then(q)))wr(()=>sb.from('requests').delete().eq('event_id',r.eid).eq('user_id',r.u).then(q),first(r.u)+' approved')}
+function declineReq(rid){const r=REQ.find(x=>x.id===rid);if(r)wr(()=>sb.from('requests').delete().eq('event_id',r.eid).eq('user_id',r.u).then(q))}
+
+function openInvite(){const e=evById(R.id),have=gOf(e.id).map(g=>g.u),pool=FR.filter(u=>have.indexOf(u)<0);
+ openSheet(XB()+'<h2>Invite guests</h2><p class="sub">You choose who comes. People you leave unticked cannot see this event.</p>'+
+ '<h3 style="font-size:16px;margin-top:8px">Your friends</h3>'+
+ (pool.length?pool.map(u=>'<label class="ck"><input type="checkbox" value="'+esc(u)+'"><span>'+esc(nm(u))+(UNAME[u]?' <small style="color:var(--muted)">@'+esc(UNAME[u])+'</small>':'')+'</span></label>').join('')+'<button class="btn full" style="margin-top:12px" onclick="saveInvites()">Invite selected</button>':'<div class="empty">'+(FR.length?'All your friends are already invited.':'You have no friends on the app yet. Add friends in the Friends tab.')+'</div>')+
+ '<h3 style="font-size:16px;margin-top:22px">Everyone else</h3><p class="sub">Send the invite message in any chat. People who open the app with the code can ask to join, and you approve each one.</p><button class="btn alt full" onclick="shareLink()">Share invite message</button>')}
+async function saveInvites(){const e=evById(R.id),c=[].slice.call(document.querySelectorAll('#sheet .ck input:checked')).map(x=>x.value);if(!c.length){toast('Pick at least one friend');return}
+ const ok=await wr(()=>sb.from('guests').upsert(c.map(u=>({event_id:e.id,user_id:u,via:'host',status:'pending'})),{onConflict:'event_id,user_id',ignoreDuplicates:true}).then(q));
+ closeSheet();if(ok)toast(c.length+' invited')}
+function openThanks(u){const e=evById(R.id),ev=EV[e.type],gs=groups(e.id),g=u?gs.find(x=>x.u===u):null;
+ const t=g?'Thank you '+first(u)+' for '+phrase(g.items)+'! You made '+ev.my+' extra special.':'Thank you all for the gifts and love! You made '+ev.my+' extra special.';
+ openSheet(XB()+'<h2>'+(g?'Thank '+esc(first(u)):'Thank everyone')+'</h2><p class="sub">Edit the message, then copy it into your chat.</p><textarea id="tx">'+esc(t)+'</textarea><div class="acts" style="padding:10px 0 0"><button class="btn" onclick="copyText($(\'tx\').value,\'Message copied\')">Copy message</button></div>')}
+
+/* ---------- guest view ---------- */
+function guestPage(e){const back='<div class="hdr"><button class="back" onclick="closeEv()">‹ Events</button></div>';
+ if(!canSee(e)){const asked=REQ.some(r=>r.eid===e.id&&r.u===ME.id);
+  return back+'<div class="card form center"><h2>Private event</h2><p class="sub">'+esc(nm(e.owner))+' has not invited you to this event.'+(asked?' Your request is waiting for approval.':' You can ask to join.')+'</p>'+(asked?'':'<button class="btn full" onclick="reqInvite()">Ask to join</button>')+'</div>'}
+ if(isT(e))return back+cardTop(e,ticketPanel(e));
+ const gs=groups(e.id),shown=showAll?gs:gs.slice(0,3),idx=gs.findIndex(g=>g.u===ME.id),mg=myG(e.id);
+ const nd=!gs.length?'':idx===0?'<div class="nudge top">You are the top giver.</div>':'<div class="nudge">'+esc(nm(gs[0].u))+' is ahead of you. <button class="lnk" onclick="openGift()">Send a gift to take first place</button></div>';
+ const reply='<div style="padding:4px 14px 0"><b style="font-size:14px">Will you come?</b><div class="seg" style="margin-top:6px">'+['going','maybe','no'].map(k=>'<button class="'+(mg&&mg.status===k?'on':'')+'" onclick="rsvp(\''+k+'\')">'+SL[k]+'</button>').join('')+'</div></div>';
+ const acts='<div class="acts"><button class="btn" onclick="openGift()">Send a gift</button>'+(e.open!==false?'<button class="btn alt" onclick="openBring()">Bring a friend</button>':'')+'<button class="btn alt" onclick="shareLink()">Copy invite message</button></div>';
+ const panel='<div class="panel"><h3>Gifts received ('+giftsOf(e.id).length+')</h3>'+goalBar(e)+nd+(gs.length?giftRows(shown,false):'<div class="empty">No gifts yet. Be the first to send one.</div>')+(gs.length>3?'<button class="more" onclick="showAll='+(!showAll)+';render()">'+(showAll?'Show less':'View all')+'</button>':'')+'</div>';
+ return back+cardTop(e,reply+acts+panel)}
+function rsvp(k){const e=evById(R.id),mg=myG(e.id);
+ wr(()=>mg?sb.from('guests').update({status:k}).eq('event_id',e.id).eq('user_id',ME.id).then(q):sb.from('guests').insert({event_id:e.id,user_id:ME.id,via:'link',status:k}).then(q),'Reply saved')}
+function reqInvite(){const id=R.id,s=STUB[id];wr(()=>sb.from('requests').insert({event_id:id,user_id:ME.id,via:'link'}).then(q),'Request sent'+(s?' to '+nm(s.owner_id):''))}
+function openBring(){const e=evById(R.id),pool=FR.filter(u=>!GST.some(g=>g.eid===e.id&&g.u===u)&&!REQ.some(r=>r.eid===e.id&&r.u===u));
+ openSheet(XB()+'<h2>Bring a friend</h2><p class="sub">'+esc(nm(e.owner))+' approves each friend you add.</p>'+(pool.length?pool.map(u=>'<label class="ck"><input type="checkbox" value="'+esc(u)+'"><span>'+esc(nm(u))+'</span></label>').join('')+'<button class="btn full" style="margin-top:12px" onclick="saveBring()">Ask for these friends</button>':'<div class="empty">'+(FR.length?'All your friends are already invited or waiting.':'Your friends list is empty. Add friends in the Friends tab.')+'</div>'))}
+async function saveBring(){const e=evById(R.id),c=[].slice.call(document.querySelectorAll('#sheet .ck input:checked')).map(x=>x.value);if(!c.length){toast('Pick at least one friend');return}
+ const ok=await wr(()=>sb.from('requests').upsert(c.map(u=>({event_id:e.id,user_id:u,via:ME.id})),{onConflict:'event_id,user_id',ignoreDuplicates:true}).then(q));
+ closeSheet();if(ok)toast('Asked '+nm(e.owner)+' to approve '+c.length)}
+function openGift(){const e=evById(R.id);selItem=null;
+ const g=EV[e.type].items.map(i=>'<button class="gi" id="gi_'+i.id+'" onclick="pickItem(\''+i.id+'\')"><span class="e">'+i.e+'</span>'+i.n+'<br>'+usd(i.p)+'</button>').join('');
+ openSheet(XB()+'<h2>Send a gift</h2><p class="sub">Sending as '+esc(nm(ME.id))+'. Your gift shows on the card for everyone.</p><div class="grid">'+g+'</div><p class="note" style="margin-top:12px">Payments are not connected yet. Sending a gift records it on the card without charging you.</p><div class="err" id="ge"></div><button class="btn full" id="pay" onclick="sendGift()">Send gift</button>')}
+function pickItem(id){const e=evById(R.id);selItem=id;EV[e.type].items.forEach(i=>$('gi_'+i.id).classList.toggle('sel',i.id===id));const i=EV[e.type].items.find(x=>x.id===id);$('pay').textContent='Send '+i.n.toLowerCase()+' ('+usd(i.p)+')';$('ge').textContent=''}
+async function sendGift(){const e=evById(R.id);if(!selItem){$('ge').textContent='Choose a gift.';return}
+ const m=EV[e.type].items.find(x=>x.id===selItem),b=$('pay');b.disabled=true;
+ const ok=await wr(()=>sb.from('gifts').insert({event_id:e.id,user_id:ME.id,item_id:m.id,emoji:m.e,label:m.w,price:m.p}).then(q));
+ if(ok&&!myG(e.id)&&e.owner!==ME.id)await wr(()=>sb.from('guests').insert({event_id:e.id,user_id:ME.id,via:'link',status:'going'}).then(q));
+ if(ok){closeSheet();toast('Gift sent')}else b.disabled=false}
+
+/* ---------- ticketed events ---------- */
+function ticketPanel(e){const left=leftOf(e),total=e.total,sold=Math.max(0,total-left),pct=total>0?Math.round(sold/total*100):0,closed=info(e).days<0,mine=validTix(e.id).filter(t=>t.u===ME.id);
+ let h='<div class="tix"><div class="tp"><span>Ticket price</span><b>'+kes(e.price)+'</b></div>'+(left>0?'<div class="left">'+left+' of '+total+' tickets left</div>':'')+'<div class="bar2"><i style="width:'+pct+'%"></i></div></div>';
+ if(left<=0)h+='<div class="soldout" role="status"><b>SOLD OUT</b><span>All '+total+' tickets have been taken.</span></div>';
+ if(mine.length)h+='<div class="mytix"><h3>You are in 🎉</h3><p class="sub" style="margin:0 0 4px">'+mine.length+(mine.length===1?' ticket':' tickets')+' under '+esc(nm(ME.id))+'. Show the code at the door.</p>'+mine.map(t=>'<div class="row"><span class="t"><span class="code">'+esc(t.code)+'</span></span><small style="color:var(--muted)">'+ago(t.t)+'</small></div>').join('')+'</div>';
+ h+='<div class="acts">'+(closed?'':left>0?'<button class="btn" onclick="openBuy()">'+(mine.length?'Buy more tickets':'Buy ticket')+'</button>':'')+'<button class="btn alt" onclick="shareLink()">Copy invite message</button></div>';
+ if(closed)h+='<p class="sub" style="padding:0 18px 14px;text-align:center">Ticket sales have closed.</p>';
+ return h}
+let BQ=1;
+function openBuy(){const e=evById(R.id);if(!isT(e))return;BQ=1;
+ openSheet(XB()+'<h2>Buy tickets</h2><p class="sub">'+esc(e.name)+' · '+kes(e.price)+' each · <span id="bl"></span></p><div class="qty"><button aria-label="Fewer tickets" onclick="bumpQ(-1)">−</button><b id="bq">1</b><button aria-label="More tickets" onclick="bumpQ(1)">+</button></div><p class="note" style="margin-top:12px">Payments are not connected yet. Buying records your tickets without charging you.</p><div class="err" id="be"></div><button class="btn full" id="bpay" onclick="buyTix()"></button>');bumpQ(0)}
+function bumpQ(d){const e=evById(R.id),mx=Math.max(1,Math.min(50,leftOf(e)));BQ=Math.max(1,Math.min(mx,BQ+d));$('bq').textContent=BQ;$('bl').textContent=leftOf(e)+' left';$('bpay').textContent='Buy '+BQ+(BQ===1?' ticket':' tickets')+' ('+kes(BQ*e.price)+')';$('be').textContent=''}
+async function buyTix(){const e=evById(R.id),b=$('bpay');b.disabled=true;
+ try{const r=await sb.rpc('buy_ticket',{p_event:e.id,p_qty:BQ});if(r.error)throw r.error;await loadAll();closeSheet();toast(BQ===1?'Ticket bought':BQ+' tickets bought')}
+ catch(x){await loadAll();const t=$('be');if(t){t.textContent=errText(x);b.disabled=false;bumpQ(0);t.textContent=errText(x)}else toast(errText(x))}}
+function ticketManager(e){const ev=EV[e.type],i=info(e),all=tixOf(e.id),ok=validTix(e.id),sold=ok.length,left=leftOf(e),n=evNet(e);
+ const secs=[['overview','Overview'],['tickets','Tickets ('+sold+')'],['manage','Manage']];
+ let h='<div class="hdr"><button class="back" onclick="closeEv()">‹ Events</button><button class="chipbtn" onclick="editEv()">Edit</button></div>'+
+ '<h1 class="ttl">'+esc(e.name)+'</h1><p class="sub" style="margin:2px 0 0">🎟️ '+ev.n+' · '+countText(i)+(e.time?' · '+fmtTime(e.time):'')+(e.venue?' · '+esc(e.venue):'')+'</p>'+
+ '<div class="seg" role="tablist">'+secs.map(s=>'<button role="tab" class="'+(R.sec===s[0]?'on':'')+'" onclick="R.sec=\''+s[0]+'\';render()">'+s[1]+'</button>').join('')+'</div>';
+ if(secs.every(s=>s[0]!==R.sec))R.sec='overview';
+ if(R.sec==='overview'){
+  h+=(left<=0?'<div class="soldout" role="status" style="margin:0 0 12px"><b>SOLD OUT</b><span>All '+e.total+' tickets have been taken.</span></div>':'')+
+  '<div class="stats"><div class="tile"><div class="k">Tickets sold</div><div class="v">'+sold+'</div><div class="s">of '+e.total+'</div></div><div class="tile"><div class="k">Tickets left</div><div class="v">'+left+'</div><div class="s">at '+kes(e.price)+' each</div></div><div class="tile"><div class="k">Collected (only you see this)</div><div class="v">'+kes(n.net)+'</div><div class="s">Recorded sales</div></div><div class="tile"><div class="k">Days left</div><div class="v">'+(i.days<0?'Ended':i.days)+'</div><div class="s">'+fmtDate(i.when)+'</div></div></div>'+
+  '<div class="goal"><div class="bar2"><i style="width:'+Math.min(100,Math.round(sold/Math.max(1,e.total)*100))+'%"></i></div></div>'+
+  '<div class="qa"><button class="btn" onclick="shareLink()">Copy invite message</button><button class="btn alt" onclick="openShare()">Share image</button><button class="btn alt" onclick="copyText(\''+esc(e.id)+'\',\'Event code copied\')">Copy code</button><button class="btn alt" onclick="copyText(APP_URL+\'#'+esc(e.id)+'\',\'Link copied\')">Copy link</button></div>'+
+  '<p class="sub" style="margin-top:8px">Event code: <b>'+esc(e.id)+'</b></p>'+
+  '<div class="sec"><h3>Recent activity</h3>'+tixActivity(e)+'</div><div class="sec"><h3>How guests see it</h3><div style="height:8px"></div>'+cardTop(e,ticketPanel(e))+'</div>'}
+ else if(R.sec==='tickets'){
+  const by={};all.forEach(t=>{(by[t.u]=by[t.u]||[]).push(t)});
+  const us=Object.keys(by).sort((a,b)=>Math.max.apply(null,by[b].map(t=>t.t))-Math.max.apply(null,by[a].map(t=>t.t)));
+  h+=us.length?us.map(u=>{const v=by[u].filter(t=>t.st==='valid');return '<div class="card" style="padding:4px 14px;margin-bottom:10px"><div class="row"><div class="gav" aria-hidden="true">'+esc(ini(u))+'</div><span class="t"><b>'+esc(nm(u))+'</b>'+(UNAME[u]?' <small>@'+esc(UNAME[u])+'</small>':'')+'<br><small>'+v.length+(v.length===1?' ticket':' tickets')+' · '+kes(v.reduce((a,t)=>a+t.price,0))+'</small></span></div>'+by[u].sort((a,b)=>a.t-b.t).map(t=>'<div class="row'+(t.st==='cancelled'?' cx':'')+'"><span class="t"><span class="code">'+esc(t.code)+'</span><br><small>'+kes(t.price)+' · '+ago(t.t)+'</small></span>'+(t.st==='valid'?'<button class="thx" onclick="cancelTix(\''+esc(t.id)+'\')">Cancel</button>':'<span class="chip c-no">Cancelled</span>')+'</div>').join('')+'</div>'}).join(''):'<div class="empty">No tickets sold yet. Share your event to get the first sale.</div><div class="acts" style="padding:0"><button class="btn" onclick="shareLink()">Copy invite message</button></div>';
+ }
+ else h+=ticketManage(e);
+ return h}
+function tixActivity(e){const a=tixOf(e.id).filter(t=>t.st==='valid').map(t=>({t:t.t,x:'<b>'+esc(first(t.u))+'</b> bought a ticket 🎟️'}));a.sort((x,y)=>y.t-x.t);const r=a.slice(0,5);
+ return r.length?'<div class="card" style="padding:4px 14px">'+r.map(x=>'<div class="row"><span class="t">'+x.x+'</span><small style="color:var(--muted)">'+ago(x.t)+'</small></div>').join('')+'</div>':'<div class="empty">Nothing yet. Share your event to get started.</div>'}
+function ticketManage(e){return '<div class="mrow"><span>Edit event details<small>Name, price, number of tickets, date, venue, photo</small></span><button class="lnk" onclick="editEv()">Edit</button></div>'+
+ '<div class="mrow"><span>Share image<small>Promo picture with the app name at the bottom</small></span><button class="lnk" onclick="openShare()">Open</button></div>'+
+ '<p class="sub" style="margin-top:10px">Anyone with the code can open this event and buy tickets while some are left.</p>'+
+ '<div class="acts" style="padding:18px 0 0"><button class="btn danger full" onclick="delEv()">Delete event</button></div>'}
+function cancelTix(id){const t=TIX.find(x=>x.id===id);if(!t)return;askConfirm('Cancel this ticket?','The ticket '+t.code+' for '+nm(t.u)+' will stop working and the spot goes back on sale.','Cancel ticket',()=>wr(()=>sb.rpc('cancel_ticket',{p_ticket:id}).then(q),'Ticket cancelled'))}
+
+/* ---------- friends, wallet, profile ---------- */
+function friendsTab(){const rows=FR.map(u=>'<div class="row"><div class="gav" aria-hidden="true">'+esc(ini(u))+'</div><span class="t"><b>'+esc(nm(u))+'</b><br><small>'+(UNAME[u]?'@'+esc(UNAME[u]):'')+'</small></span><button class="xb" aria-label="Remove friend" onclick="rmFriend(\''+esc(u)+'\')">×</button></div>').join('');
+ return '<p class="note">Only you can see this list. Friends find each other by exact username.</p>'+(rows?'<div class="card" style="padding:4px 14px">'+rows+'</div>':'<div class="empty">No friends yet. Add someone by username.</div>')+
+ '<div class="sec"><label for="au" style="margin-top:0">Add a friend</label><input type="text" id="au" placeholder="@username" autocapitalize="none" autocomplete="off"><div class="err" id="fe2"></div><button class="btn full" onclick="addFriend()">Add friend</button></div>'+
+ '<p class="sub" style="margin-top:12px">Your username is @'+esc(ME.username)+'. Friends use it to find you.</p><button class="btn alt full" onclick="shareProfile()">Invite someone to the app</button>'}
+function shareProfile(){const t='Join me on '+APP_NAME+'. My username is @'+ME.username+': '+APP_URL;try{if(navigator.share){navigator.share({text:t}).catch(()=>{});return}}catch(x){}copyText(t,'Link copied')}
+async function addFriend(){const u=$('au').value.trim().replace(/^@/,'').toLowerCase(),e=$('fe2');
+ if(!u){e.textContent='Enter a username.';return}if(u===ME.username){e.textContent='That is your own username.';return}
+ const r=await sb.from('profiles').select('id,name,username').eq('username',u).maybeSingle();
+ if(r.error||!r.data){e.textContent='No one with that username. Check the spelling.';return}
+ if(FR.indexOf(r.data.id)>=0){e.textContent='Already your friend.';return}
+ NAME[r.data.id]=r.data.name;UNAME[r.data.id]=r.data.username;
+ if(await wr(()=>sb.from('friends').insert({owner_id:ME.id,friend_id:r.data.id}).then(q),r.data.name+' added'))render()}
+async function rmFriend(u){if(await wr(()=>sb.from('friends').delete().eq('owner_id',ME.id).eq('friend_id',u).then(q)))render()}
+function walletTab(){const mine=EVS.filter(e=>e.owner===ME.id),tot=mine.reduce((a,e)=>a+evNet(e).net,0);
+ const rows=mine.map(e=>'<div class="line"><span>'+EV[e.type].e+' '+esc(e.name)+'</span><b style="color:var(--ink)">'+usd(evNet(e).net)+'</b></div>').join('')||'<div class="empty">No events yet.</div>';
+ return '<div class="wallet"><div class="sub" style="margin:0">Gifts and ticket sales recorded on your events</div><div class="n">'+usd(tot)+'</div></div><p class="note">Payments are not connected yet. This total is the value of gifts and tickets recorded on your events. Payouts will be added with payments. Amounts are private: friends only see gift names.</p><div class="sec"><h3>By event</h3>'+rows+'</div>'}
+function meTab(){return '<div class="card" style="padding:16px 18px"><div style="display:flex;gap:12px;align-items:center"><div class="gav" style="width:52px;height:52px;font-size:18px" aria-hidden="true">'+esc(ini(ME.id))+'</div><div><b>'+esc(nm(ME.id))+'</b><br><small style="color:var(--muted)">@'+esc(ME.username)+'</small></div></div>'+
+ '<label for="nn">Display name</label><input type="text" id="nn" value="'+esc(ME.name)+'"><button class="btn full" style="margin-top:10px" onclick="saveName()">Save name</button></div>'+
+ '<div class="acts" style="padding:22px 0 0"><button class="btn alt full" onclick="signOut()">Sign out</button></div>'}
+async function saveName(){const n=$('nn').value.trim();if(!n){toast('Enter a name');return}
+ if(await wr(()=>sb.from('profiles').update({name:n}).eq('id',ME.id).then(q),'Saved')){ME.name=n;NAME[ME.id]=n;render()}}
+
+/* ---------- share image ---------- */
+function openShare(){openSheet(XB()+'<h2>Share this event</h2><p class="sub">This image is made from your card.</p><canvas id="cv" class="pv" width="1080" height="1350"></canvas><div class="acts" style="padding:0"><button class="btn" onclick="shareImg()">Share</button><button class="btn alt" onclick="saveImg()">Save image</button></div>');
+ const e=evById(R.id),go=()=>drawShare(e,$('cv'));(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(go)}
+function fit(x,t,px,wt,ff,max){while(px>40){x.font=wt+' '+px+'px '+ff;if(x.measureText(t).width<=max)break;px-=6}}
+function drawShare(S,c){const x=c.getContext('2d'),W=1080,ev=EV[S.type],i=info(S),L=heads(S,i),col=FRAMES[S.frame]||FRAMES.pink,ff="'Fredoka','Nunito',system-ui,sans-serif",rib=ribT(S);
+ x.fillStyle='#FBEAF0';x.fillRect(0,0,W,1350);x.textAlign='center';
+ x.fillStyle='#534AB7';fit(x,L[0],130,600,ff,960);x.fillText(L[0],W/2,170);
+ x.fillStyle='#D4537E';fit(x,L[1],150,600,ff,960);x.fillText(L[1],W/2,320);
+ x.font='700 38px '+ff;const rw=Math.min(980,Math.max(460,x.measureText(rib).width+90));x.fillStyle='#D4537E';x.fillRect(W/2-rw/2,360,rw,64);x.fillStyle='#fff';x.fillText(rib,W/2,405);
+ x.fillStyle='#DCEBFA';x.fillRect(0,460,W,520);x.font='110px sans-serif';x.fillText(ev.deco[0],140,600);x.fillText(ev.deco[1],940,540);x.fillText(ev.deco[1],150,900);x.fillText(ev.deco[0],930,900);
+ const ax=W/2-190,ay=490,aw=380,ah=450;
+ const arch=()=>{x.beginPath();x.moveTo(ax,ay+ah);x.lineTo(ax,ay+190);x.arc(W/2,ay+190,190,Math.PI,0);x.lineTo(ax+aw,ay+ah);x.closePath()};
+ const finish=()=>{x.lineWidth=18;x.strokeStyle=col;x.stroke();x.fillStyle='#26215C';const cta=S.kind==='ticket'?'Get your ticket: '+S.name:'Send a gift to '+S.name;fit(x,cta,54,600,ff,960);x.fillText(cta,W/2,1050);x.fillStyle='#6A648F';x.font='700 38px '+ff;x.fillText(fmtDate(i.when)+(S.time?' | '+fmtTime(S.time):'')+(S.venue?' | '+S.venue:''),W/2,1110);if(S.kind==='ticket'){x.fillStyle='#D4537E';x.font='700 44px '+ff;x.fillText('Tickets '+kes(S.price),W/2,1165)}
+  x.fillStyle='#534AB7';x.fillRect(0,1190,W,160);x.fillStyle='#fff';x.font='600 60px '+ff;x.fillText(ev.e+' '+APP_NAME,W/2,1265);x.font='700 34px '+ff;x.fillText(APP_URL?APP_URL.replace(/^https?:\/\//,''):'Event code: '+S.id,W/2,1318)};
+ arch();x.save();x.clip();
+ if(S.photo){const im=new Image();im.onload=()=>{const s=Math.max(aw/im.width,ah/im.height),w=im.width*s,h=im.height*s;x.drawImage(im,W/2-w/2,ay+ah/2-h/2,w,h);x.restore();arch();finish()};im.src=S.photo}
+ else{x.fillStyle='#EFEDE6';x.fillRect(ax,ay,aw,ah);x.fillStyle='#000';x.font='140px sans-serif';x.fillText(ev.e,W/2,ay+ah/2+50);x.restore();arch();finish()}}
+const imgBlob=cb=>$('cv').toBlob(cb,'image/png');
+function shareImg(){imgBlob(b=>{const f=new File([b],'event.png',{type:'image/png'});
+ try{if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],text:inviteText(evById(R.id))}).catch(()=>{});return}}catch(e){}saveImg()})}
+function saveImg(){imgBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='event.png';document.body.appendChild(a);a.click();a.remove();toast('Image saved')})}
+
+boot();
+</script>
+</body>
+</html>
